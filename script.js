@@ -15,8 +15,8 @@ function divide(a, b) {
 }
 
 let firstNum;
-let secondNum;
 let operator;
+let secondNum;
 
 function operate(num1, sym, num2) {
     if (sym === '+') {
@@ -28,4 +28,40 @@ function operate(num1, sym, num2) {
     } else if (sym === '/') {
         return divide(num1, num2);
     }
+}
+
+const btn = document.querySelectorAll('.btn');
+const scn = document.querySelector('.screen');
+
+for (let i = 0; i < btn.length; i++) {
+    btn[i].addEventListener('click', () => {
+
+        if (firstNum === undefined) {
+            if (btn[i].textContent >= 0 && btn[i].textContent <= 9) {
+                firstNum = btn[i].textContent;
+                scn.textContent = firstNum;
+            }
+        }
+
+        if (operator === undefined) {
+            switch(btn[i].textContent) {
+                case '+':
+                    operator = btn[i].textContent;
+                    scn.textContent = `${firstNum}${operator}`;
+                    break
+                case '-':
+                    operator = btn[i].textContent;
+                    scn.textContent = `${firstNum}${operator}`;
+                    break
+                case '*':
+                    operator = btn[i].textContent;
+                    scn.textContent = `${firstNum}${operator}`;
+                    break
+                case '/':
+                    operator = btn[i].textContent;
+                    scn.textContent = `${firstNum}${operator}`;
+                    break
+            }   
+        }
+    });
 }
