@@ -33,42 +33,54 @@ function operate(num1, sym, num2) {
 const btn = document.querySelectorAll('.btn');
 const scn = document.querySelector('.screen');
 
+const sym = ['+', '-', '*', '/', '=', '.', 'C'];
+
 for (let i = 0; i < btn.length; i++) {
+
+    const char = btn[i].textContent;
+
     btn[i].addEventListener('click', () => {
 
         if (firstNum === undefined) {
-            if (btn[i].textContent >= 0 && btn[i].textContent <= 9) {
-                firstNum = btn[i].textContent;
+            if (char >= 0 && char <= 9) {
+                firstNum = parseInt(char);
                 scn.textContent = firstNum;
             }
+        } else if (!sym.includes(char) && operator === undefined) {
+            firstNum = parseInt(`${firstNum}${char}`);
+            scn.textContent = firstNum;
         }
 
         if (operator === undefined) {
-            switch(btn[i].textContent) {
+            switch(char) {
                 case '+':
-                    operator = btn[i].textContent;
+                    operator = char;
                     scn.textContent = `${firstNum}${operator}`;
                     break
                 case '-':
-                    operator = btn[i].textContent;
+                    operator = char;
                     scn.textContent = `${firstNum}${operator}`;
                     break
                 case '*':
-                    operator = btn[i].textContent;
+                    operator = char;
                     scn.textContent = `${firstNum}${operator}`;
                     break
                 case '/':
-                    operator = btn[i].textContent;
+                    operator = char;
                     scn.textContent = `${firstNum}${operator}`;
                     break
             }   
         }
 
-        if (firstNum && operator) {
-            if (btn[i].textContent >= 0 && btn[i].textContent <= 9) {
-                secondNum = btn[i].textContent;
+        if (secondNum === undefined && operator) {
+            if (char >= 0 && char <= 9) {
+                secondNum = parseInt(char);
                 scn.textContent = `${firstNum}${operator}${secondNum}`;
             }
+        } else if (secondNum) {
+            secondNum = parseInt(`${secondNum}${char}`);
+            scn.textContent = `${firstNum}${operator}${secondNum}`;
         }
+
     });
 }
