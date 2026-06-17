@@ -63,5 +63,12 @@ for (let i = 0; i < btn.length; i++) {
                     break
             }   
         }
+
+        if (firstNum && operator) {
+            if (btn[i].textContent >= 0 && btn[i].textContent <= 9) {
+                secondNum = btn[i].textContent;
+                scn.textContent = `${firstNum}${operator}${secondNum}`;
+            }
+        }
     });
 }
