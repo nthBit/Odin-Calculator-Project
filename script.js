@@ -45,7 +45,7 @@ for (let i = 0; i < btn.length; i++) {
                 firstNum = Number(char);
                 scn.textContent = firstNum;
             }
-        } else if (!opp.includes(char) && operator === undefined && char !== 'C') {
+        } else if (!opp.includes(char) && (operator === undefined) && (char !== 'C') && (char !== 'D')) {
             firstNum = Number(`${firstNum}${char}`);
             scn.textContent = firstNum;
         }
@@ -71,12 +71,12 @@ for (let i = 0; i < btn.length; i++) {
             }   
         }
 
-        if (operator && secondNum === undefined ) {
+        if (operator && secondNum === undefined) {
             if (char >= 0 && char <= 9) {
                 secondNum = Number(char);
                 scn.textContent = `${firstNum}${operator}${secondNum}`;
             }
-        } else if (secondNum && (char !== '=') && !opp.includes(char)) {
+        } else if (secondNum && (char !== '=') && !opp.includes(char) && (char !== 'D')) {
             secondNum = Number(`${secondNum}${char}`);
             scn.textContent = `${firstNum}${operator}${secondNum}`;
         }
@@ -89,9 +89,14 @@ for (let i = 0; i < btn.length; i++) {
         }
 
         if (operator && char === '=') {
-            firstNum = operate(firstNum, operator, secondNum);
-            operator = secondNum = undefined;
-            scn.textContent = `${firstNum}`;
+            if (secondNum === 0) {
+                firstNum = operator = secondNum = undefined;
+                scn.textContent = 'dun b dum';
+            } else {
+                firstNum = operate(firstNum, operator, secondNum);
+                operator = secondNum = undefined;
+                scn.textContent = `${firstNum}`;
+            }
         }
 
         if (char === 'C') {
@@ -99,5 +104,40 @@ for (let i = 0; i < btn.length; i++) {
             scn.textContent = '';
         }
 
+        if (char === 'D') {
+
+            if (secondNum !== undefined) {
+                const secondNumArr = String(secondNum).split('');
+                secondNumArr.pop();
+                secondNum = Number(secondNumArr.join(''));
+
+                if (secondNum) {
+                    scn.textContent = `${firstNum}${operator}${secondNum}`;
+                } else {
+                    secondNum = undefined;
+                    scn.textContent = `${firstNum}${operator}`;
+                }
+
+            } else if (operator !== undefined) {
+                operator = undefined;
+                scn.textContent = `${firstNum}`;
+
+            } else if (firstNum !== undefined) {
+                const firstNumArr = String(firstNum).split('');
+                firstNumArr.pop();
+                firstNum = Number(firstNumArr.join(''));
+
+                if (firstNum) {
+                    scn.textContent = `${firstNum}`;
+                } else {
+                    firstNum = undefined;
+                    scn.textContent = '';
+                }
+            }
+        }
+
     });
 }
+
+// dont allow division by 0
+// add backspace button
