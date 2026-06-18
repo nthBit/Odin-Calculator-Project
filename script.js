@@ -32,8 +32,7 @@ function operate(num1, sym, num2) {
 
 const btn = document.querySelectorAll('.btn');
 const scn = document.querySelector('.screen');
-
-const sym = ['+', '-', '*', '/', '=', '.', 'C'];
+const opp = ['+', '-', '*', '/'];
 
 for (let i = 0; i < btn.length; i++) {
 
@@ -43,11 +42,11 @@ for (let i = 0; i < btn.length; i++) {
 
         if (firstNum === undefined) {
             if (char >= 0 && char <= 9) {
-                firstNum = parseInt(char);
+                firstNum = Number(char);
                 scn.textContent = firstNum;
             }
-        } else if (!sym.includes(char) && operator === undefined) {
-            firstNum = parseInt(`${firstNum}${char}`);
+        } else if (!opp.includes(char) && operator === undefined && char !== 'C') {
+            firstNum = Number(`${firstNum}${char}`);
             scn.textContent = firstNum;
         }
 
@@ -72,14 +71,32 @@ for (let i = 0; i < btn.length; i++) {
             }   
         }
 
-        if (secondNum === undefined && operator) {
+        if (operator && secondNum === undefined ) {
             if (char >= 0 && char <= 9) {
-                secondNum = parseInt(char);
+                secondNum = Number(char);
                 scn.textContent = `${firstNum}${operator}${secondNum}`;
             }
-        } else if (secondNum) {
-            secondNum = parseInt(`${secondNum}${char}`);
+        } else if (secondNum && (char !== '=') && !opp.includes(char)) {
+            secondNum = Number(`${secondNum}${char}`);
             scn.textContent = `${firstNum}${operator}${secondNum}`;
+        }
+
+        if (operator && secondNum && opp.includes(char)) {
+            firstNum = operate(firstNum, operator, secondNum);
+            operator = char;
+            secondNum = undefined;
+            scn.textContent = `${firstNum}${char}`;
+        }
+
+        if (operator && char === '=') {
+            firstNum = operate(firstNum, operator, secondNum);
+            operator = secondNum = undefined;
+            scn.textContent = `${firstNum}`;
+        }
+
+        if (char === 'C') {
+            firstNum = operator = secondNum = undefined;
+            scn.textContent = '';
         }
 
     });
