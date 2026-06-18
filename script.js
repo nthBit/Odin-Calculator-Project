@@ -40,16 +40,28 @@ for (let i = 0; i < btn.length; i++) {
 
     btn[i].addEventListener('click', () => {
 
+        // firstNum
         if (firstNum === undefined) {
-            if (char >= 0 && char <= 9) {
-                firstNum = Number(char);
+            if (char >= '0' && char <= '9') {
+                firstNum = char;
                 scn.textContent = firstNum;
             }
         } else if (!opp.includes(char) && (operator === undefined) && (char !== 'C') && (char !== 'D')) {
-            firstNum = Number(`${firstNum}${char}`);
-            scn.textContent = firstNum;
+            if (char >= '0' && char <= '9') {
+                firstNum = `${firstNum}${char}`;
+                scn.textContent = firstNum;
+            } else if (char === '.') {
+                const dotFirst = String(firstNum).split('');
+                if (!dotFirst.includes('.')) {
+                    firstNum = `${dotFirst.join('')}${'.'}`;
+                    scn.textContent = firstNum;
+                } else {
+                    scn.textContent = firstNum;
+                }
+            }
         }
 
+        // operator
         if (operator === undefined) {
             switch(char) {
                 case '+':
@@ -71,45 +83,59 @@ for (let i = 0; i < btn.length; i++) {
             }   
         }
 
+        // secondNum
         if (operator && secondNum === undefined) {
-            if (char >= 0 && char <= 9) {
-                secondNum = Number(char);
+            if (char >= '0' && char <= '9') {
+                secondNum = char;
                 scn.textContent = `${firstNum}${operator}${secondNum}`;
             }
-        } else if (secondNum && (char !== '=') && !opp.includes(char) && (char !== 'D')) {
-            secondNum = Number(`${secondNum}${char}`);
+        } else if (secondNum && char === '.') {
+                const dotSecond = String(secondNum).split('');
+                if (!dotSecond.includes('.')) {
+                    secondNum = `${dotSecond.join('')}${'.'}`;
+                    scn.textContent = `${firstNum}${operator}${secondNum}`;
+                } else {
+                    scn.textContent = `${firstNum}${operator}${secondNum}`;
+                }
+            } else if (secondNum && (char !== '=') && !opp.includes(char) && (char !== 'D')) {
+            secondNum = `${secondNum}${char}`;
             scn.textContent = `${firstNum}${operator}${secondNum}`;
-        }
+        } 
 
+        // sum last two nums
         if (operator && secondNum && opp.includes(char)) {
-            firstNum = operate(firstNum, operator, secondNum);
+            firstNum = operate(Number(firstNum), operator, Number(secondNum));
             operator = char;
             secondNum = undefined;
             scn.textContent = `${firstNum}${char}`;
         }
 
-        if (operator && char === '=') {
-            if (secondNum === 0) {
+        // equals and divide by 0
+        if (operator && (char === '=')) {
+            if (secondNum === '0') {
                 firstNum = operator = secondNum = undefined;
                 scn.textContent = 'dun b dum';
             } else {
-                firstNum = operate(firstNum, operator, secondNum);
+                firstNum = operate(Number(firstNum), operator, Number(secondNum));
                 operator = secondNum = undefined;
                 scn.textContent = `${firstNum}`;
             }
         }
 
+        // clear
         if (char === 'C') {
             firstNum = operator = secondNum = undefined;
             scn.textContent = '';
         }
 
+
+        // backspace
         if (char === 'D') {
 
             if (secondNum !== undefined) {
                 const secondNumArr = String(secondNum).split('');
                 secondNumArr.pop();
-                secondNum = Number(secondNumArr.join(''));
+                secondNum = secondNumArr.join('');
 
                 if (secondNum) {
                     scn.textContent = `${firstNum}${operator}${secondNum}`;
@@ -125,7 +151,7 @@ for (let i = 0; i < btn.length; i++) {
             } else if (firstNum !== undefined) {
                 const firstNumArr = String(firstNum).split('');
                 firstNumArr.pop();
-                firstNum = Number(firstNumArr.join(''));
+                firstNum = firstNumArr.join('');
 
                 if (firstNum) {
                     scn.textContent = `${firstNum}`;
@@ -138,6 +164,3 @@ for (let i = 0; i < btn.length; i++) {
 
     });
 }
-
-// dont allow division by 0
-// add backspace button
