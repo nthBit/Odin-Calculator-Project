@@ -18,149 +18,239 @@ let firstNum;
 let operator;
 let secondNum;
 
-function operate(num1, sym, num2) {
-    if (sym === '+') {
+function operate(num1, symbol, num2) {
+    if (symbol === '+') {
         return add(num1, num2);
-    } else if (sym === '-') {
+    } else if (symbol === '-') {
         return subtract(num1, num2);
-    } else if (sym === '*') {
+    } else if (symbol === '*') {
         return multiply(num1, num2);
-    } else if (sym === '/') {
+    } else if (symbol === '/') {
         return divide(num1, num2);
     }
 }
 
-const btn = document.querySelectorAll('.btn');
-const scn = document.querySelector('.screen');
-const opp = ['+', '-', '*', '/'];
+const buttonNodeList = document.querySelectorAll('.btn');
+const screen = document.querySelector('.screen');
+const operatorArray = ['+', '-', '*', '/'];
 
-for (let i = 0; i < btn.length; i++) {
+function firstNumFirstChar(char) {
+    if (char >= '0' && char <= '9') {
+        firstNum = char;
+        screen.textContent = firstNum;
+    }
+}
 
-    const char = btn[i].textContent;
+function firstNumSecondChar(char) {
+    if (char >= '0' && char <= '9') {
+        firstNum = `${firstNum}${char}`;
+        screen.textContent = firstNum;
+    } else if (char === '.') {
+        const dotFirst = String(firstNum).split('');
+        if (!dotFirst.includes('.')) {
+            firstNum = `${dotFirst.join('')}${'.'}`;
+            screen.textContent = firstNum;
+        } else {
+            screen.textContent = firstNum;
+        }
+    }
+}
 
-    btn[i].addEventListener('click', () => {
+function selectOperator(char) {
+    switch(char) {
+        case '+':
+            operator = char;
+            screen.textContent = `${firstNum}${operator}`;
+            break
+        case '-':
+            operator = char;
+            screen.textContent = `${firstNum}${operator}`;
+            break
+        case '*':
+            operator = char;
+            screen.textContent = `${firstNum}${operator}`;
+            break
+        case '/':
+            operator = char;
+            screen.textContent = `${firstNum}${operator}`;
+            break
+    }   
+}
+
+function secondNumFirstChar(char) {
+    if (char >= '0' && char <= '9') {
+        secondNum = char;
+        screen.textContent = `${firstNum}${operator}${secondNum}`;
+    }
+}
+
+function secondNumDecimal(char) {
+    const dotSecond = String(secondNum).split('');
+    if (!dotSecond.includes('.')) {
+        secondNum = `${dotSecond.join('')}${'.'}`;
+        screen.textContent = `${firstNum}${operator}${secondNum}`;
+    } else {
+        screen.textContent = `${firstNum}${operator}${secondNum}`;
+    }
+}
+
+function secondNumSecondChar(char) {
+    secondNum = `${secondNum}${char}`;
+    screen.textContent = `${firstNum}${operator}${secondNum}`;
+}
+
+function partialCalculation(char) {
+    firstNum = operate(Number(firstNum), operator, Number(secondNum));
+    operator = char;
+    secondNum = undefined;
+    screen.textContent = `${firstNum}${char}`;
+}
+
+function fullCalculation(char) {
+    if (secondNum === '0') {
+        firstNum = operator = secondNum = undefined;
+        screen.textContent = 'dun b dum';
+    } else {
+        firstNum = operate(Number(firstNum), operator, Number(secondNum));
+        operator = secondNum = undefined;
+        screen.textContent = `${firstNum}`;
+    }
+}
+
+function clearScreen(char) {
+    firstNum = operator = secondNum = undefined;
+    screen.textContent = '';
+}
+
+function backspace(char) {
+    if (secondNum !== undefined) {
+        const secondNumArr = String(secondNum).split('');
+        secondNumArr.pop();
+        secondNum = secondNumArr.join('');
+
+        if (secondNum) {
+            screen.textContent = `${firstNum}${operator}${secondNum}`;
+        } else {
+            secondNum = undefined;
+            screen.textContent = `${firstNum}${operator}`;
+        }
+
+    } else if (operator !== undefined) {
+        operator = undefined;
+        screen.textContent = `${firstNum}`;
+
+    } else if (firstNum !== undefined) {
+        const firstNumArr = String(firstNum).split('');
+        firstNumArr.pop();
+        firstNum = firstNumArr.join('');
+
+        if (firstNum) {
+            screen.textContent = `${firstNum}`;
+        } else {
+            firstNum = undefined;
+            screen.textContent = '';
+        }
+    }
+}
+
+for (let i = 0; i < buttonNodeList.length; i++) {
+
+    let char = buttonNodeList[i].textContent;
+
+    buttonNodeList[i].addEventListener('click', () => {
 
         // firstNum
         if (firstNum === undefined) {
-            if (char >= '0' && char <= '9') {
-                firstNum = char;
-                scn.textContent = firstNum;
-            }
-        } else if (!opp.includes(char) && (operator === undefined) && (char !== 'C') && (char !== 'D')) {
-            if (char >= '0' && char <= '9') {
-                firstNum = `${firstNum}${char}`;
-                scn.textContent = firstNum;
-            } else if (char === '.') {
-                const dotFirst = String(firstNum).split('');
-                if (!dotFirst.includes('.')) {
-                    firstNum = `${dotFirst.join('')}${'.'}`;
-                    scn.textContent = firstNum;
-                } else {
-                    scn.textContent = firstNum;
-                }
-            }
+            firstNumFirstChar(char);
+        } else if (!operatorArray.includes(char) && (operator === undefined) && (char !== 'C') && (char !== 'D')) {
+            firstNumSecondChar(char);
         }
 
         // operator
         if (operator === undefined) {
-            switch(char) {
-                case '+':
-                    operator = char;
-                    scn.textContent = `${firstNum}${operator}`;
-                    break
-                case '-':
-                    operator = char;
-                    scn.textContent = `${firstNum}${operator}`;
-                    break
-                case '*':
-                    operator = char;
-                    scn.textContent = `${firstNum}${operator}`;
-                    break
-                case '/':
-                    operator = char;
-                    scn.textContent = `${firstNum}${operator}`;
-                    break
-            }   
+            selectOperator(char);
         }
 
         // secondNum
         if (operator && secondNum === undefined) {
-            if (char >= '0' && char <= '9') {
-                secondNum = char;
-                scn.textContent = `${firstNum}${operator}${secondNum}`;
-            }
+            secondNumFirstChar(char);
         } else if (secondNum && char === '.') {
-                const dotSecond = String(secondNum).split('');
-                if (!dotSecond.includes('.')) {
-                    secondNum = `${dotSecond.join('')}${'.'}`;
-                    scn.textContent = `${firstNum}${operator}${secondNum}`;
-                } else {
-                    scn.textContent = `${firstNum}${operator}${secondNum}`;
-                }
-            } else if (secondNum && (char !== '=') && !opp.includes(char) && (char !== 'D')) {
-            secondNum = `${secondNum}${char}`;
-            scn.textContent = `${firstNum}${operator}${secondNum}`;
-        } 
+            secondNumDecimal(char);
+        } else if (secondNum && (char !== '=') && !operatorArray.includes(char) && (char !== 'D')) {
+            secondNumSecondChar(char);
+        }
 
         // sum last two nums
-        if (operator && secondNum && opp.includes(char)) {
-            firstNum = operate(Number(firstNum), operator, Number(secondNum));
-            operator = char;
-            secondNum = undefined;
-            scn.textContent = `${firstNum}${char}`;
+        if (operator && secondNum && operatorArray.includes(char)) {
+            partialCalculation(char);
         }
 
         // equals and divide by 0
         if (operator && (char === '=')) {
-            if (secondNum === '0') {
-                firstNum = operator = secondNum = undefined;
-                scn.textContent = 'dun b dum';
-            } else {
-                firstNum = operate(Number(firstNum), operator, Number(secondNum));
-                operator = secondNum = undefined;
-                scn.textContent = `${firstNum}`;
-            }
+            fullCalculation(char);
         }
 
         // clear
         if (char === 'C') {
-            firstNum = operator = secondNum = undefined;
-            scn.textContent = '';
+            clearScreen(char);
         }
-
 
         // backspace
         if (char === 'D') {
-
-            if (secondNum !== undefined) {
-                const secondNumArr = String(secondNum).split('');
-                secondNumArr.pop();
-                secondNum = secondNumArr.join('');
-
-                if (secondNum) {
-                    scn.textContent = `${firstNum}${operator}${secondNum}`;
-                } else {
-                    secondNum = undefined;
-                    scn.textContent = `${firstNum}${operator}`;
-                }
-
-            } else if (operator !== undefined) {
-                operator = undefined;
-                scn.textContent = `${firstNum}`;
-
-            } else if (firstNum !== undefined) {
-                const firstNumArr = String(firstNum).split('');
-                firstNumArr.pop();
-                firstNum = firstNumArr.join('');
-
-                if (firstNum) {
-                    scn.textContent = `${firstNum}`;
-                } else {
-                    firstNum = undefined;
-                    scn.textContent = '';
-                }
-            }
+            backspace(char);
         }
 
     });
 }
+
+
+
+document.addEventListener('keydown', (event) => {
+
+    const key = event.key;
+
+    // ignores the shift key
+    if (event.key === 'Shift') return;
+
+    // firstNum
+    if (firstNum === undefined) {
+        firstNumFirstChar(key);
+    } else if (!operatorArray.includes(key) && (operator === undefined) && (key !== 'C') && (key !== 'D')) {
+        firstNumSecondChar(key);
+    }
+
+        // operator
+    if (operator === undefined) {
+        selectOperator(key);
+    }
+
+    // secondNum
+    if (operator && secondNum === undefined) {
+        secondNumFirstChar(key);
+    } else if (secondNum && key === '.') {
+        secondNumDecimal(key);
+    } else if (secondNum && (key !== '=') && !operatorArray.includes(key) && (key !== 'D')) {
+        secondNumSecondChar(key);
+    }
+
+    // sum last two nums
+    if (operator && secondNum && operatorArray.includes(key)) {
+        partialCalculation(key);
+    }
+
+    // equals and divide by 0
+    if (operator && (key === '=')) {
+        fullCalculation(key);
+    }
+
+    // clear
+    if (key === 'C') {
+        clearScreen(key);
+    }
+
+    // backspace
+    if (key === 'D') {
+        backspace(key);
+    }
+
+});
